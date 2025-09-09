@@ -13,7 +13,28 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int GRID_SIZE = 3;
     private GridLayout grid;
-    private boolean cellState [][];
+    private boolean cellState[][];
+
+    View.OnClickListener buttonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Button current = (Button) v;
+            for (int i = 0; i < grid.getChildCount(); i++) {
+                Button gridButton = (Button) grid.getChildAt(i);
+                if (gridButton == current) {
+                    // Find the button's row and col
+                    int row = i / GRID_SIZE;
+                    int col = i % GRID_SIZE;
+                    if (cellState[row][col] == true) {
+                        cellState[row][col] = false;
+                    } else {
+                        cellState[row][col] = true;
+                    }
+                }
+            }
+            recolor();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +45,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         grid = findViewById(R.id.light_grid);
 
-//      randomize();
+        randomize();
 
         recolor();
+
+        for(int i = 0; i < grid.getChildCount(); i++){
+            Button currButton = (Button) grid.getChildAt(i);
+            currButton.setOnClickListener(buttonListener);
+        }
     }
 
     public void recolor(){
@@ -38,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             int col = i % GRID_SIZE;
 
             if (cellState[row][col] == true) {
-                gridButton.setBackgroundColor(getColor(R.color.blue_500));
+                gridButton.setBackgroundColor(getColor(R.color.coral));
             } else {
                 gridButton.setBackgroundColor(getColor(R.color.black));
             }
@@ -53,7 +79,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 }
