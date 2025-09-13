@@ -2,10 +2,12 @@ package com.example.lightsout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+//import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -14,6 +16,11 @@ public class MainActivity extends AppCompatActivity {
     public static final int GRID_SIZE = 3;
     private GridLayout grid;
     private boolean cellState[][];
+    private TextView scoreText;
+    private Button resetButton;
+    private Button randomizeButton;
+
+
 
     View.OnClickListener buttonListener = new View.OnClickListener() {
         @Override
@@ -33,9 +40,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             recolor();
+            updateCount();
         }
     };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,15 +51,58 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         grid = findViewById(R.id.light_grid);
+        scoreText = findViewById(R.id.scoreText);
 
         randomize();
-
         recolor();
+        updateCount();
 
         for(int i = 0; i < grid.getChildCount(); i++){
             Button currButton = (Button) grid.getChildAt(i);
             currButton.setOnClickListener(buttonListener);
         }
+        resetButton = findViewById(R.id.resetButton);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set all lights to OFF
+                for (int i = 0; i < GRID_SIZE; i++) {
+                    for (int j = 0; j < GRID_SIZE; j++) {
+                        cellState[i][j] = false;
+                    }
+                }
+                recolor();
+                updateCount();
+            }
+        });
+        randomizeButton = findViewById(R.id.randomizeButton);
+        randomizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                randomize();
+                recolor();
+                updateCount();
+            }
+        });
+    }
+
+    // Method to update count
+    public void updateCount() {
+        int count = 0;
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (cellState[i][j]) {
+                    count++;
+                }
+            }
+        }
+        scoreText.setText(String.format("Score: %d", count));
+
+        // Check if player has won (all lights off)
+//        if (count == 0) {
+//            Intent intent = new Intent(MainActivity.this, WinActivity.class);
+//            startActivity(intent);
+//        }
     }
 
     public void recolor(){
